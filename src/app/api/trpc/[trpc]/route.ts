@@ -10,6 +10,7 @@ async function handler(request: Request) {
         createContext: async (options) => await createTRPCContext()
     });
 
+    /*
     response.headers.set('Access-Control-Allow-Credentials', 'true');
     response.headers.set('Access-Control-Allow-Origin', '*');
     response.headers.set(
@@ -20,6 +21,7 @@ async function handler(request: Request) {
         'Access-Control-Allow-Headers',
         'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
     );
+    */
 
     return response;
 }
