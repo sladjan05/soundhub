@@ -21,7 +21,6 @@ export default async function getSoundMetadata({
     });
 
     const userId = await userIdPromise;
-    if (!userId) return null;
 
     const count = await countPromise;
     if (!count) return null;
@@ -29,13 +28,15 @@ export default async function getSoundMetadata({
     const likeCount = count._count.likes;
     const commentCount = count._count.comments;
 
-    const isLiked = await prisma.like.count({
-        where: { userId: userId, soundId: id }
-    });
+    const isLiked = userId
+        ? !!(await prisma.like.count({
+              where: { userId: userId, soundId: id }
+          }))
+        : false;
 
     return {
-        isLiked: isLiked === 1,
-        likeCount: likeCount,
-        commentCount: commentCount
+        isLiked,
+        likeCount,
+        commentCount
     };
 }
