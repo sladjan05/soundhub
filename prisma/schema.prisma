@@ -1,0 +1,105 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "cockroachdb"
+    url      = env("DATABASE_URL")
+}
+
+model Account {
+    id                String  @id @default(cuid())
+    userId            String
+    type              String
+    provider          String
+    providerAccountId String
+    refresh_token     String? @db.String
+    access_token      String? @db.String
+    expires_at        Int?
+    token_type        String?
+    scope             String?
+    id_token          String? @db.String
+    session_state     String?
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([provider, providerAccountId])
+}
+
+model User {
+    id            String    @id @default(cuid())
+    name          String?
+    email         String?   @unique
+    emailVerified DateTime?
+    image         String?
+
+    following Follow[] @relation("follower")
+    followers Follow[] @relation("followed")
+
+    sounds  Sound[]
+    Comment Comment[] @relation("user")
+
+    likes Like[] @relation("user")
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    accounts Account[]
+}
+
+model Follow {
+    followerId String
+    followedId String
+
+    follower User @relation("follower", fields: [followerId], references: [id])
+    followed User @relation("followed", fields: [followedId], references: [id])
+
+    @@id([followerId, followedId])
+}
+
+model Sound {
+    id String @id @default(cuid())
+
+    authorId String
+    content  String?
+
+    spotifyObjectType SpotifyObjectType
+    spotifyObjectId   String
+
+    likes    Like[]    @relation("sound")
+    comments Comment[] @relation("sound")
+
+    createdAt DateTime @default(now())
+
+    author User @relation(fields: [authorId], references: [id])
+}
+
+enum SpotifyObjectType {
+    artist
+    track
+    album
+}
+
+model Like {
+    userId  String
+    soundId String
+
+    user  User  @relation("user", fields: [userId], references: [id], onDelete: Cascade)
+    sound Sound @relation("sound", fields: [soundId], references: [id], onDelete: Cascade)
+
+    @@id([userId, soundId])
+}
+
+model Comment {
+    id String @id @default(cuid())
+
+    authorId String
+    soundId  String
+
+    content String
+
+    createdAt DateTime @default(now())
+
+    author User  @relation("user", fields: [authorId], references: [id], onDelete: Cascade)
+    sound  Sound @relation("sound", fields: [soundId], references: [id], onDelete: Cascade)
+}
