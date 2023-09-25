@@ -1,13 +1,12 @@
 import { Sound, SoundMetadata } from '@/models/Sound';
 import { prisma } from '../prisma';
-import getCurrentUserId from '../user/getCurrentUserId';
+import isSoundLiked from './isSoundLiked';
 
 export default async function getSoundMetadata({
     id
 }: {
     id: Sound['id'];
 }): Promise<SoundMetadata | null> {
-    const userIdPromise = getCurrentUserId();
     const countPromise = prisma.sound.findUnique({
         where: { id },
         include: {
@@ -20,19 +19,14 @@ export default async function getSoundMetadata({
         }
     });
 
-    const userId = await userIdPromise;
+    const isLikedPromise = isSoundLiked({ id });
 
     const count = await countPromise;
     if (!count) return null;
 
+    const isLiked = await isLikedPromise;
     const likeCount = count._count.likes;
     const commentCount = count._count.comments;
-
-    const isLiked = userId
-        ? !!(await prisma.like.count({
-              where: { userId: userId, soundId: id }
-          }))
-        : false;
 
     return {
         isLiked,

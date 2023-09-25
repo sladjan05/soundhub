@@ -8,8 +8,13 @@ export default async function toggleSoundLiked({
 }: {
     id: Sound['id'];
 }): Promise<boolean> {
+    const currentUserPromise = getCurrentUser();
+    const isLikedPromise = isSoundLiked({ id });
+
     const currentUser = await getCurrentUser();
-    const isLiked = await isSoundLiked({ id });
+    if (!currentUser) return false;
+
+    const isLiked = await isLikedPromise;
 
     if (isLiked) {
         await prisma.like.delete({
