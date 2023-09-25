@@ -11,15 +11,4 @@ async function handler(request: Request) {
     });
 }
 
-async function m(request: Request) {
-    const response = await handler(request);
-
-    response.headers.append('Access-Control-Allow-Origin', '*');
-    response.headers.append('Access-Control-Request-Method', '*');
-    response.headers.append('Access-Control-Allow-Methods', 'OPTIONS, GET');
-    response.headers.append('Access-Control-Allow-Headers', '*');
-
-    return response;
-}
-
 export { handler as GET, handler as POST };
