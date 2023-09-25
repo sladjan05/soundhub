@@ -3,7 +3,8 @@ import SuperJSON from 'superjson';
 import { createTRPCContext } from './trpc/context';
 
 export const t = initTRPC.context<typeof createTRPCContext>().create({
-    transformer: SuperJSON
+    transformer: SuperJSON,
+    allowOutsideOfServer: true
 });
 
 const isAuthenticated = t.middleware(({ next, ctx }) => {

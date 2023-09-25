@@ -2,7 +2,7 @@ import { createTRPCContext } from '@/data/trpc/context';
 import { trpcRouter } from '@/data/trpc/routers/main';
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
 
-async function trpcHandler(request: Request) {
+async function handler(request: Request) {
     return fetchRequestHandler({
         endpoint: '/api/trpc',
         req: request,
@@ -11,8 +11,8 @@ async function trpcHandler(request: Request) {
     });
 }
 
-async function handler(request: Request) {
-    const response = await trpcHandler(request);
+async function m(request: Request) {
+    const response = await handler(request);
 
     response.headers.append('Access-Control-Allow-Origin', '*');
     response.headers.append('Access-Control-Request-Method', '*');
