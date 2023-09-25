@@ -7,9 +7,11 @@ export default async function postComment({
     content
 }: Pick<Comment, 'soundId' | 'content'>): Promise<string> {
     const userId = await getCurrentUserId();
+    if (!userId) return '';
+
     const object = await prisma.comment.create({
         data: {
-            authorId: userId!,
+            authorId: userId,
             soundId: soundId,
             content: content
         }
