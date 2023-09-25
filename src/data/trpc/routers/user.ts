@@ -10,7 +10,7 @@ import {
 export const userRouter = createTRPCRouter({
     getCurrent: protectedProcedure.query(async () => {
         const user = await getCurrentUser();
-        return user!;
+        return user;
     }),
     getById: publicProcedure
         .input(schema_user.pick({ id: true }))
